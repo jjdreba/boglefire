@@ -4,16 +4,32 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
+import { Toaster } from './components/ui/sonner';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+
+// We don't use useFlashToast() here anymore
+
+function App({ children }: { children: React.ReactNode }) {
+    return (
+        <>
+            {children}
+            <Toaster />
+        </>
+    );
+}
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
-    setup({ el, App, props }) {
+    setup({ el, App: InertiaApp, props }) {
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
+        root.render(
+            <App>
+                <InertiaApp {...props} />
+            </App>
+        );
     },
     progress: {
         color: '#4B5563',
